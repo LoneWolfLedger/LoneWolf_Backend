@@ -6,9 +6,15 @@ import os
 app = Flask(__name__)
 CORS(app) 
 
-# !!! INJECT YOUR FREE GEMINI API KEY HERE !!!
-GEMINI_API_KEY = "AIzaSyBN8L8lt23DIs_N5MxAOI_T9DGAsaY7QpA"
-genai.configure(api_key=GEMINI_API_KEY)
+# --- ENTERPRISE DEVSECOPS: PULL KEY FROM HIDDEN VAULT ---
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
+
+if GEMINI_API_KEY:
+    genai.configure(api_key=GEMINI_API_KEY)
+else:
+    print("[CRITICAL ERROR] GEMINI API KEY MISSING FROM RENDER ENVIRONMENT")
+
+# --- DYNAMIC FUTURE-PROOF MODEL SELECTION ---
 
 # --- DYNAMIC FUTURE-PROOF MODEL SELECTION ---
 # This automatically finds the newest active model so updates never break your app
