@@ -1,0 +1,58 @@
+{
+    "US_SP500": {
+        "asset": "^GSPC",
+        "error": "'title'"
+    },
+    "US_NASDAQ": {
+        "asset": "^IXIC",
+        "error": "'title'"
+    },
+    "INDIA_NIFTY": {
+        "asset": "^NSEI",
+        "error": "'title'"
+    },
+    "INDIA_SENSEX": {
+        "asset": "^BSESN",
+        "error": "'title'"
+    },
+    "CHINA_SHANGHAI": {
+        "asset": "000001.SS",
+        "error": "'title'"
+    },
+    "JAPAN_NIKKEI": {
+        "asset": "^N225",
+        "error": "'title'"
+    },
+    "SINGAPORE_STI": {
+        "asset": "^STI",
+        "error": "'title'"
+    },
+    "UK_FTSE": {
+        "asset": "^FTSE",
+        "error": "'title'"
+    },
+    "GOLD_COMEX": {
+        "asset": "GC=F",
+        "error": "'title'"
+    },
+    "CRUDE_OIL": {
+        "asset": "CL=F",
+        "error": "'title'"
+    },
+    "NATURAL_GAS": {
+        "asset": "NG=F",
+        "error": "'title'"
+    },
+    "BITCOIN": {
+        "asset": "BTC-USD",
+        "error": "'title'"
+    },
+    "ETHEREUM": {
+        "asset": "ETH-USD",
+        "error": "'title'"
+    },
+    "SOLANA": {
+        "asset": "SOL-USD",
+        "error": "'title'"
+    }
+}
