@@ -1,6 +1,6 @@
 import hashlib, time, os
 RENDER_API_URL = "https://lonewolf-backend.onrender.com/update_oracle"
-MASTER_KEY = os.environ.get("MASTER_KEY", "OMEGA-777")
+MASTER_KEY = os.environ.get("MASTER_KEY", "021282")
 TARGET_ACCURACY_BOUND = 0.85 
 
 def generate_unique_user_hash(wallet_address, balance):
