@@ -48,17 +48,24 @@ def chronos_prediction():
     return jsonify({"error": "MATRIX COMPILING. AWAITING COLAB UPLINK."}), 503
 
 # 2. COLAB CALLS THIS TO INJECT NEW DATA
+# 2. COLAB CALLS THIS TO INJECT NEW DATA
 @app.route('/update_oracle', methods=['POST'])
 def update_oracle():
-    provided_key = request.headers.get("x-oracle-key")
-    if provided_key != ORACLE_PASSWORD:
+    data = request.json
+    
+    # Check the password INSIDE the payload instead of the headers
+    if data.get("oracle_key") != "OMEGA-777":
         return jsonify({"error": "UNAUTHORIZED INJECTION"}), 401
     
+    # Remove the password before saving to the public matrix
+    data.pop("oracle_key", None)
+    
     global GLOBAL_MATRIX
-    GLOBAL_MATRIX = request.json
+    GLOBAL_MATRIX = data
     
     # Save to disk so it survives server restarts
     with open("oracle_memory.json", "w") as f:
+        import json
         json.dump(GLOBAL_MATRIX, f)
         
     return jsonify({"status": "MATRIX SUCCESSFULLY OVERWRITTEN"}), 200
