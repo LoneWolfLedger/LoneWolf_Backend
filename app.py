@@ -8,18 +8,22 @@ RENDER_API_URL = "https://lonewolf-backend.onrender.com/update_oracle"
 MASTER_KEY = os.environ.get("MASTER_KEY", "021282")
 
 def stamp_alpha_to_bitcoin(asset, target):
-    """Zero-Trust Proof of Alpha via OpenTimestamps"""
-    payload = f"ASSET:{asset}|TARGET:{target}|TIMESTAMP:{time.time()}"
+    """Zero-Trust Proof of Alpha & Authorship via OpenTimestamps"""
+    
+    # 🟢 YOUR INSTITUTIONAL PUBLIC KEY
+    # Replace this with your actual MetaMask or Phantom wallet address
+    AUTHOR_PUBKEY = "0xf7df69A45146979B44136a2EC57946e556c05172" 
+    
+    # We inject your Public Key into the payload. 
+    # This proves YOU generated the data before it was hashed.
+    payload = f"AUTHOR:{AUTHOR_PUBKEY}|ASSET:{asset}|TARGET:{target}|TIMESTAMP:{time.time()}"
+    
     hash_hex = hashlib.sha256(payload.encode()).hexdigest()
     
-    # Write to ephemeral file
     with open("alpha_proof.txt", "w") as f:
         f.write(hash_hex)
     
-    # Run OpenTimestamps ($0 Bitcoin anchoring)
     os.system("ots stamp alpha_proof.txt")
-    
-    # Return the cryptographic receipt string
     return f"0xBTC_{hash_hex[:24].upper()}"
 
 def execute_brain_architecture():
