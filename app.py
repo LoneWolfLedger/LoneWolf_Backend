@@ -5,42 +5,54 @@ import os
 import json
 
 app = Flask(__name__)
-CORS(app) 
+# Allow cross-origin requests securely
+CORS(app, resources={r"/*": {"origins": "*"}})
 
+# --- 1. SECURE VAULT EXTRACTION ---
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
-if GEMINI_API_KEY: genai.configure(api_key=GEMINI_API_KEY)
+MASTER_KEY = os.environ.get("MASTER_KEY", "FALLBACK_KEY_UNSECURE") 
 
+if GEMINI_API_KEY: genai.configure(api_key=GEMINI_API_KEY)
 active_model = 'models/gemini-1.5-flash'
 try:
     for m in genai.list_models():
         if 'generateContent' in m.supported_generation_methods and 'flash' in m.name:
             active_model = m.name; break
 except: pass
-
 model = genai.GenerativeModel(active_model)
 
 GLOBAL_MATRIX = {}
-MASTER_KEY = "OMEGA-777" 
 
 @app.route('/', methods=['GET'])
-def system_status(): return jsonify({"status": "HIGH-FREQUENCY SINGULARITY ONLINE"}), 200
+def system_status(): 
+    return jsonify({"status": "ZERO-TRUST SECURE NODE ONLINE"}), 200
 
-@app.route('/oracle', methods=['GET'])
+# --- 2. THE CRYPTOGRAPHIC LOCK (Read Data) ---
+@app.route('/oracle', methods=['POST', 'OPTIONS'])
 def get_oracle():
+    if request.method == "OPTIONS": return jsonify({"status": "ok"}), 200
+    
+    data = request.json or {}
+    # Server-side verification. The password is NEVER exposed to the frontend.
+    if data.get("master_key") != MASTER_KEY:
+        return jsonify({"error": "CRYPTOGRAPHIC VERIFICATION FAILED. ACCESS DENIED."}), 401
+        
     if GLOBAL_MATRIX: return jsonify(GLOBAL_MATRIX)
     if os.path.exists("oracle_memory.json"):
         with open("oracle_memory.json", "r") as f: return jsonify(json.load(f))
     return jsonify({"error": "AWAITING HIGH-FREQUENCY UPLINK"}), 503
 
+# --- 3. THE INJECTION FIREWALL (Write Data) ---
 @app.route('/update_oracle', methods=['POST'])
 def update_oracle():
     data = request.json
-    if data.get("oracle_key") != MASTER_KEY: return jsonify({"error": "UNAUTHORIZED"}), 401
+    if data.get("oracle_key") != MASTER_KEY: return jsonify({"error": "UNAUTHORIZED INJECTION"}), 401
+    
     data.pop("oracle_key", None)
     global GLOBAL_MATRIX
     GLOBAL_MATRIX = data
     with open("oracle_memory.json", "w") as f: json.dump(GLOBAL_MATRIX, f)
-    return jsonify({"status": "LIVE MATRIX OVERWRITTEN"}), 200
+    return jsonify({"status": "LIVE MATRIX SECURELY OVERWRITTEN"}), 200
 
 @app.route('/chat', methods=['POST', 'OPTIONS'])
 def oracle_chat():
@@ -52,16 +64,11 @@ def oracle_chat():
     
     if not user_message: return jsonify({"error": "No message"}), 400
 
-    # The AI now acts as a dedicated Quant Risk Manager using the user's secure portfolio state
     context = f"""
     You are CHRONOS-OMEGA, an elite Quantitative Portfolio Risk Manager. 
-    User ZK-Signature: {zk_signature} (Cryptographically Verified).
-    User Portfolio Data: {portfolio_state}
-    
-    Current global market matrix: {str(GLOBAL_MATRIX)[:500]}...
-    
-    Analyze their portfolio against current live market conditions. Give exact, numerical, high-probability tips (85% confidence targets). 
-    Reply in a cold, elite, mathematical tone. Max 3 sentences. 
+    User ZK-Signature: {zk_signature}. User Portfolio: {portfolio_state}
+    Analyze their portfolio against current live market conditions. 
+    Give exact, numerical, high-probability tips. Reply in a cold, elite, mathematical tone. Max 3 sentences. 
     User query: {user_message}
     """
     try:
