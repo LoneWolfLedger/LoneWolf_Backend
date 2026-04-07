@@ -2,27 +2,28 @@ name: Autonomous Oracle Swarm Sync
 
 on:
   schedule:
-    - cron: '0 * * * *'
-  workflow_dispatch:
+    - cron: '0 */12 * * *' # Runs every 12 hours automatically
+  workflow_dispatch: # Allows you to click a button to run it instantly
 
 jobs:
-  run-matrix:
+  execute_matrix:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
+      - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Set up Python 3.10
+      - name: Setup Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
 
-      - name: Install Heavy AI Dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install yfinance torch numpy pandas scipy scikit-learn vaderSentiment feedparser requests
+      - name: Install System Dependencies
+        run: sudo apt-get install -y build-essential
 
-      - name: Ignite The Singularity (Push data to Render)
-        run: |
-          cd oracle_engine
-          python master_matrix.py
+      - name: Install Python AI & Math Libraries
+        run: pip install -r requirements.txt
+
+      - name: Execute KAN & LPPLS Brain
+        env:
+          MASTER_KEY: ${{ secrets.MASTER_KEY }} # Pulls from your GitHub Secrets
+        run: python main.py # (Change main.py to whatever you named your Python file)
